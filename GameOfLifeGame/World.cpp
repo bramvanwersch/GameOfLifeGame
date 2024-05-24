@@ -2,9 +2,8 @@
 #include "World.h"
 #include <BWengine/BWengineErrors.h>
 
-World::World(glm::vec2 size)
+World::World()
 {
-	m_size = size; // in chunks
 	m_spriteBatch.init();
 
 }
@@ -19,7 +18,7 @@ void World::generate() {
 		BWengine::raiseLastError();
 	}
 	m_backgroundTexture = std::make_unique<GameTexture>();
-	m_backgroundTexture->init(m_size * glm::vec2(CHUNK_WIDTH * BLOCK_WIDTH, CHUNK_HEIGTH * BLOCK_HEIGTH),
+	m_backgroundTexture->init(glm::vec2(PIXEL_WIDTH, PIXEL_HEIGTH),
 	BWengine::ColorRGBA8(255, 255, 255, 255), sheet);
 }
 
@@ -39,16 +38,21 @@ void World::updateBlocks(){
 
 }
 
+void World::setBlock(glm::vec2 worldPosition) {
+	// set a number of blocks based on the size chosen by user
+	worldPosition = glm::floor(worldPosition);
+	int x = (int) (worldPosition[0] / BLOCK_WIDTH);
+	int y = NR_BLOCKS_HEIGTH - 1 - (int) (worldPosition[1] / BLOCK_HEIGTH);
+	blocks[x][y] = "test";
+	printf("%d, %d\n", x, y);
+}
+
 void World::processInput(BWengine::InputManager* inputManager, BWengine::Camera2D& camera)
 {
 	if (inputManager->isKeyDown(BWengine::Keys::mouse_left)) {
 		glm::vec2 worldPosition = inputManager->getMouseCoords();
 		worldPosition = camera.screenToWorldCoords(worldPosition);
-	}
-	else if (inputManager->isKeyDown(BWengine::Keys::mouse_right)) {
-		glm::vec2 worldPosition = inputManager->getMouseCoords();
-		worldPosition = camera.screenToWorldCoords(worldPosition);
-		std::string voidName = "void";
+		setBlock(worldPosition);
 	}
 
 	if (inputManager->isKeyPressed(BWengine::Keys::space)) {
@@ -56,23 +60,12 @@ void World::processInput(BWengine::InputManager* inputManager, BWengine::Camera2
 		//make sure time is not skipped
 		m_previousTicks = (float)SDL_GetTicks();
 	}
-
-	if (inputManager->isKeyPressed(BWengine::Keys::equals) || inputManager->isKeyPressed(BWengine::Keys::plus_np)) {
-		if (m_blocksPlacedIndex < MAX_INDEX) {
-			m_blocksPlacedIndex++;
-		}
-	}
-	else if (inputManager->isKeyPressed(BWengine::Keys::minus) || inputManager->isKeyPressed(BWengine::Keys::minus_np)) {
-		if (m_blocksPlacedIndex > 0) {
-			m_blocksPlacedIndex--;
-		}
-	}
 }
 
 void World::draw(BWengine::Camera2D& camera)
 {
 	float beforeTimeValue = (float)SDL_GetTicks();
-	const glm::vec4 worldRect(0.0f, 0.0f, m_size.x * CHUNK_WIDTH * BLOCK_WIDTH, m_size.y * CHUNK_HEIGTH * BLOCK_HEIGTH);
+	const glm::vec4 worldRect(0.0f, 0.0f, PIXEL_WIDTH, PIXEL_HEIGTH);
 	//draw background
 	m_spriteBatch.begin();
 	m_spriteBatch.draw(worldRect, m_backgroundTexture->getUVs(), m_backgroundTexture->texture->id, 0.0f,
@@ -80,22 +73,4 @@ void World::draw(BWengine::Camera2D& camera)
 	m_spriteBatch.end();
 	m_spriteBatch.renderBatch();
 	m_drawTime.add((float)SDL_GetTicks() - beforeTimeValue);
-}
-
-bool World::isValidWorldPositon(glm::vec2& position)
-{
-	if (position.x < 0 || position.x >= m_size.x * CHUNK_WIDTH * BLOCK_WIDTH) {
-		return false;
-	}
-	if (position.y < 0 || position.y >= m_size.y * CHUNK_HEIGTH * BLOCK_HEIGTH) {
-		return false;
-	}
-	return true;
-}
-
-size_t World::worldPositionToIndex(glm::vec2 worldPosition)
-{
-	const glm::vec2 pixelChunkSize = { CHUNK_WIDTH * BLOCK_WIDTH, CHUNK_HEIGTH * BLOCK_HEIGTH };
-	glm::vec2 chunkPos = glm::floor(worldPosition / pixelChunkSize);
-	return (size_t)(chunkPos.x + chunkPos.y * m_size.x);
 }

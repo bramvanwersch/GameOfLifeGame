@@ -16,7 +16,7 @@ GamePlayScreen::GamePlayScreen(BWengine::Window* window, BWengine::InputManager*
 	m_window(window),
 	m_inputManager(inputManager),
 	m_audioEngine(audioEngine),
-	m_world(glm::vec2(WORLD_SIZE[0], WORLD_SIZE[1]))
+	m_world()
 {
 }
 
@@ -66,7 +66,7 @@ void GamePlayScreen::onEntry()
 
 	//camera
 	m_camera.init(m_window->getScreenWidth(), m_window->getScreenHeight());
-	m_camera.setPosition((*m_world.getSize() * glm::vec2(CHUNK_WIDTH * BLOCK_WIDTH, CHUNK_HEIGTH * BLOCK_HEIGTH) / glm::vec2(2, 2)));
+	m_camera.setPosition((glm::vec2(PIXEL_WIDTH, PIXEL_HEIGTH) / glm::vec2(2, 2)));
 	m_camera.setScale(DEFAULT_ZOOM);
 	m_hudCamera.init(m_window->getScreenWidth(), m_window->getScreenHeight());
 	m_hudCamera.setPosition(glm::vec2(m_window->getScreenWidth() / 2, m_window->getScreenHeight() / 2));

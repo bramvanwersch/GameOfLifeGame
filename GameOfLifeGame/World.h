@@ -11,13 +11,14 @@
 #include <BWengine/SpriteBatch.h>
 #include <memory>
 #include "GameTexture.h"
+#include <map>
 
 
 class World
 {
 public:
 
-	World(glm::vec2 size);
+	World();
 	~World();
 
 	void update(BWengine::InputManager* inputManager, BWengine::Camera2D& camera);
@@ -35,15 +36,11 @@ public:
 	float getUpdateBlockTime() { return m_updateBlockTime.getAverage(); }
 	float getUpdateMoveTime() { return m_movementTime.getAverage(); }
 	float getUpdateDrawTime() { return m_drawTime.getAverage(); }
-	glm::vec2* getSize() { return &m_size; }
 
 protected:
 
 	void updateBlocks();
-
-	// functions
-	bool isValidWorldPositon(glm::vec2& position);
-	size_t worldPositionToIndex(glm::vec2 worldPosition);
+	void setBlock(glm::vec2 worldPosition);
 
 	//variables
 	BWengine::SpriteBatch m_spriteBatch;  // for drawing background
@@ -60,15 +57,8 @@ protected:
 
 	float m_previousTicks = (float)SDL_GetTicks();
 
-	glm::vec2 m_size;
-
-	std::mt19937 m_randomEngine;
+	std::map<int, std::map<int, std::string>> blocks;
 
 	bool m_paused = false;
-	bool m_updateState = false;
-	size_t m_updateOffset = 0; // blocks the update pattern is moved to the right
 
-	// for controlling size of placed blocks
-	size_t MAX_INDEX = 10;
-	size_t m_blocksPlacedIndex = 0;
 };

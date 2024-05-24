@@ -8,13 +8,14 @@ const float MAX_DELTA_TIME = 1.0f; // Maximum size of deltaTime, max time over w
 
 
 // both in pixels at zoom == 1.0f
-const int BLOCK_WIDTH = 1;
-const int BLOCK_HEIGTH = 1;
+const int BLOCK_WIDTH = 10;
+const int BLOCK_HEIGTH = 10;
 
-// in chunks
-const int WORLD_SIZE[] = { 30, 30 };
-const int CHUNK_WIDTH = 16;
-const int CHUNK_HEIGTH = 16;
+const int NR_BLOCKS_WIDTH = 50;
+const int NR_BLOCKS_HEIGTH = 50;
+
+const int PIXEL_WIDTH = BLOCK_WIDTH * NR_BLOCKS_WIDTH;
+const int PIXEL_HEIGTH = BLOCK_HEIGTH * NR_BLOCKS_HEIGTH;
 
 const float DEFAULT_ZOOM = 1.0f;
 const float MAX_ZOOM = 16.0f;

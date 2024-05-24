@@ -28,7 +28,6 @@ namespace BWengine {
 		IMainGame* m_game = nullptr;
 		std::vector<IGameScreen*> m_screens;
 		int m_currentScreenIndex = -1;
-
 	};
 }
 
