@@ -159,8 +159,8 @@ void GamePlayScreen::drawHud() {
 
 	m_hudSpriteBatch.begin();
 	std::string blockName;
-	sprintf_s(buffer, "FPS: %.0f\nZ: %.0f\nCh l: %d\nl: %d / %d\nBlock:\nn: %s\n\nTiming:\nUpdate: %.1f\n  b: %.1f\n  m: %.1f\nDraw: %.1f",
-		m_fps, m_camera.getScale(), m_world.getLoadedChunks(), m_world.getUpdatedBlocks(), m_world.getTotalBlocks(), blockName.c_str(),
+	sprintf_s(buffer, "FPS: %.0f\nZ: %.0f\nl: %d / %d\nBlock:\nn: %s\n\nTiming:\nUpdate: %.1f\n  b: %.1f\n  m: %.1f\nDraw: %.1f",
+		m_fps, m_camera.getScale(), m_world.getUpdatedBlocks(), m_world.getTotalBlocks(), blockName.c_str(),
 		m_world.getUpdateTime(), m_world.getUpdateBlockTime(), m_world.getUpdateMoveTime(), m_world.getUpdateDrawTime());
 	m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(0, m_window->getScreenHeight() - m_spriteFont->getFontHeight()),
 		glm::vec2(1.0f / 2.0f), 0.0f, BWengine::ColorRGBA8(150, 150, 150, 255));

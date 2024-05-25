@@ -1,0 +1,7 @@
+{
+    "cmake.sourceDirectory": "D:/c++ projects/MaterialMayhemcopy/deps/include/glm",
+    "files.associations": {
+        "compare": "cpp",
+        "xutility": "cpp"
+    }
+}

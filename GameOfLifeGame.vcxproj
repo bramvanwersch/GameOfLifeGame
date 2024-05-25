@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GameOfLifeGame\BlockTypeLibrary.cpp" />
     <ClCompile Include="GameOfLifeGame\App.cpp" />
     <ClCompile Include="GameOfLifeGame\Block.cpp" />
     <ClCompile Include="GameOfLifeGame\GamePlayScreen.cpp" />
@@ -26,6 +27,8 @@
     <ClCompile Include="GameOfLifeGame\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameOfLifeGame\BlockType.h" />
+    <ClInclude Include="GameOfLifeGame\BlockTypeLibrary.h" />
     <ClInclude Include="GameOfLifeGame\App.h" />
     <ClInclude Include="GameOfLifeGame\Block.h" />
     <ClInclude Include="GameOfLifeGame\Constants.h" />

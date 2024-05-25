@@ -1,11 +1,9 @@
-#include "Constants.h"
 #include "World.h"
 #include <BWengine/BWengineErrors.h>
 
 World::World()
 {
 	m_spriteBatch.init();
-
 }
 
 World::~World()
@@ -13,6 +11,7 @@ World::~World()
 }
 
 void World::generate() {
+	m_blockTypeLibrary = std::make_unique<BlockTypeLibrary>();
 	BWengine::TextureSheet* sheet = BWengine::ResourceManager::getTextureSheet("textures/blank.png");
 	if (sheet == nullptr) {
 		BWengine::raiseLastError();
@@ -43,8 +42,29 @@ void World::setBlock(glm::vec2 worldPosition) {
 	worldPosition = glm::floor(worldPosition);
 	int x = (int) (worldPosition[0] / BLOCK_WIDTH);
 	int y = NR_BLOCKS_HEIGTH - 1 - (int) (worldPosition[1] / BLOCK_HEIGTH);
-	blocks[x][y] = "test";
-	printf("%d, %d\n", x, y);
+	std::string name = "test";
+	setBlockAtCoord(x, y, m_blockTypeLibrary->getBlockType(&name));
+}
+
+Block* World::getBlockAtCoord(int x, int y) {
+	int index = coordToIndex(x, y);
+	return m_blocks[index];
+}
+
+void World::setBlockAtCoord(int x, int y, BlockType* type) {
+	int index = coordToIndex(x, y);
+	m_blocks[index] = new Block(type);
+}
+
+int World::coordToIndex(int x, int y) {
+	if (x < 0 || y < 0) {
+		BWengine::fatalError("Retrieved block out of range");
+	}
+	int index = y * NR_BLOCKS_WIDTH + x;
+	if (index >= NR_BLOCKS_HEIGTH * NR_BLOCKS_WIDTH) {
+		BWengine::fatalError("Retrieved block out of range");
+	}
+	return index;
 }
 
 void World::processInput(BWengine::InputManager* inputManager, BWengine::Camera2D& camera)
@@ -70,6 +90,15 @@ void World::draw(BWengine::Camera2D& camera)
 	m_spriteBatch.begin();
 	m_spriteBatch.draw(worldRect, m_backgroundTexture->getUVs(), m_backgroundTexture->texture->id, 0.0f,
 		m_backgroundTexture->color);
+	// not fantastic
+	for (int i = 0; i < m_blocks.size(); i++) {
+		Block* block = m_blocks[i];
+		if (block != nullptr) {
+			BlockType* type = block->getType();
+			m_spriteBatch.draw({(i % NR_BLOCKS_WIDTH) * BLOCK_WIDTH, (NR_BLOCKS_HEIGTH - 1 - (i / NR_BLOCKS_WIDTH)) * BLOCK_HEIGTH, BLOCK_WIDTH, BLOCK_HEIGTH}, type->getUVs(), type->getTextureID(), 0.0f,
+				type->getColor());
+		}
+	}
 	m_spriteBatch.end();
 	m_spriteBatch.renderBatch();
 	m_drawTime.add((float)SDL_GetTicks() - beforeTimeValue);

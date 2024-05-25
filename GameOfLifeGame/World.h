@@ -1,17 +1,19 @@
 #pragma once
 #include <vector>
 #include <random>
+#include <memory>
 
 #include <BWengine/Camera2D.h>
 #include <BWengine/InputManager.h>
 #include <BWengine/TextureSheet.h>
 #include <BWengine/ResourceManager.h>
+#include <BWengine/SpriteBatch.h>
 
 #include "utility.h"
-#include <BWengine/SpriteBatch.h>
-#include <memory>
+#include "Constants.h"
 #include "GameTexture.h"
-#include <map>
+#include "Block.h"
+#include "BlockTypeLibrary.h"
 
 
 class World
@@ -28,7 +30,6 @@ public:
 	void generate();
 
 	//getters
-	int getLoadedChunks() { return m_loadedChunks; }
 	int getUpdatedBlocks() { return (int) (m_updatedBlocks.getAverage() + 0.5f); }
 	int getTotalBlocks() { return (int)(m_totalBlocks.getAverage() + 0.5f); }
 
@@ -41,11 +42,15 @@ protected:
 
 	void updateBlocks();
 	void setBlock(glm::vec2 worldPosition);
+	int coordToIndex(int x, int y);
+	Block* getBlockAtCoord(int x, int y);
+	void setBlockAtCoord(int x, int y, BlockType* type);
 
 	//variables
 	BWengine::SpriteBatch m_spriteBatch;  // for drawing background
+	std::unique_ptr<BlockTypeLibrary> m_blockTypeLibrary = nullptr;
+
 	std::unique_ptr<GameTexture> m_backgroundTexture = nullptr;
-	int m_loadedChunks = 0;
 	AverageCollection m_updatedBlocks;
 	AverageCollection m_totalBlocks;
 
@@ -57,7 +62,7 @@ protected:
 
 	float m_previousTicks = (float)SDL_GetTicks();
 
-	std::map<int, std::map<int, std::string>> blocks;
+	std::array<Block*, NR_BLOCKS_WIDTH * NR_BLOCKS_HEIGTH> m_blocks = {nullptr};
 
 	bool m_paused = false;
 
