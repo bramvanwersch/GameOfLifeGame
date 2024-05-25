@@ -53,17 +53,20 @@ Block* World::getBlockAtCoord(int x, int y) {
 
 void World::setBlockAtCoord(int x, int y, BlockType* type) {
 	int index = coordToIndex(x, y);
+	if (index < 0) {
+		return;
+	}
 	m_blocks[index] = new Block(type);
 }
 
 int World::coordToIndex(int x, int y) {
 	if (x < 0 || y < 0) {
-		BWengine::fatalError("Retrieved block out of range");
+		return -1;
+	}
+	if (x >= NR_BLOCKS_WIDTH || y >= NR_BLOCKS_HEIGTH) {
+		return -1;
 	}
 	int index = y * NR_BLOCKS_WIDTH + x;
-	if (index >= NR_BLOCKS_HEIGTH * NR_BLOCKS_WIDTH) {
-		BWengine::fatalError("Retrieved block out of range");
-	}
 	return index;
 }
 
