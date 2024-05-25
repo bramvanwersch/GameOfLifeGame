@@ -42,7 +42,8 @@ protected:
 
 	void updateBlocks();
 	void setBlock(glm::vec2 worldPosition);
-	int coordToIndex(int x, int y);
+	bool isCoordValid(int x, int y);
+	std::string coordToKey(int x, int y);
 	Block* getBlockAtCoord(int x, int y);
 	void setBlockAtCoord(int x, int y, BlockType* type);
 
@@ -62,7 +63,7 @@ protected:
 
 	float m_previousTicks = (float)SDL_GetTicks();
 
-	std::array<Block*, NR_BLOCKS_WIDTH * NR_BLOCKS_HEIGTH> m_blocks = {nullptr};
+	std::unordered_map<std::string, Block*> m_blocks;
 
 	bool m_paused = false;
 

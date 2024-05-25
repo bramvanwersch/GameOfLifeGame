@@ -47,28 +47,39 @@ void World::setBlock(glm::vec2 worldPosition) {
 }
 
 Block* World::getBlockAtCoord(int x, int y) {
-	int index = coordToIndex(x, y);
-	return m_blocks[index];
+	if (!isCoordValid(x, y)) {
+		return nullptr;
+	}
+	std::string key = coordToKey(x, y);
+	 auto it = m_blocks.find(key);
+	 if (it == m_blocks.end()) {
+		 return nullptr;
+	 }
+	 return it->second;
 }
 
 void World::setBlockAtCoord(int x, int y, BlockType* type) {
-	int index = coordToIndex(x, y);
-	if (index < 0) {
+	if (!isCoordValid(x, y)) {
 		return;
 	}
-	m_blocks[index] = new Block(type);
+	std::string key = coordToKey(x, y);
+	m_blocks.insert(std::make_pair(key, new Block(type, { x * BLOCK_WIDTH, (NR_BLOCKS_HEIGTH - 1 - y) * BLOCK_HEIGTH })));
 }
 
-int World::coordToIndex(int x, int y) {
+bool World::isCoordValid(int x, int y) {
 	if (x < 0 || y < 0) {
-		return -1;
+		return false;
 	}
 	if (x >= NR_BLOCKS_WIDTH || y >= NR_BLOCKS_HEIGTH) {
-		return -1;
+		return false;
 	}
-	int index = y * NR_BLOCKS_WIDTH + x;
-	return index;
+	return true;
 }
+
+std::string World::coordToKey(int x, int y) {
+	return string_format("%d,%d", x, y);
+}
+
 
 void World::processInput(BWengine::InputManager* inputManager, BWengine::Camera2D& camera)
 {
@@ -94,13 +105,12 @@ void World::draw(BWengine::Camera2D& camera)
 	m_spriteBatch.draw(worldRect, m_backgroundTexture->getUVs(), m_backgroundTexture->texture->id, 0.0f,
 		m_backgroundTexture->color);
 	// not fantastic
-	for (int i = 0; i < m_blocks.size(); i++) {
-		Block* block = m_blocks[i];
-		if (block != nullptr) {
-			BlockType* type = block->getType();
-			m_spriteBatch.draw({(i % NR_BLOCKS_WIDTH) * BLOCK_WIDTH, (NR_BLOCKS_HEIGTH - 1 - (i / NR_BLOCKS_WIDTH)) * BLOCK_HEIGTH, BLOCK_WIDTH, BLOCK_HEIGTH}, type->getUVs(), type->getTextureID(), 0.0f,
-				type->getColor());
-		}
+	for (auto kv : m_blocks) {
+		Block* block = kv.second;
+		BlockType* type = block->getType();
+		glm::vec2* position = block->getPosition();
+		m_spriteBatch.draw({position->x, position->y, BLOCK_WIDTH, BLOCK_HEIGTH}, type->getUVs(), type->getTextureID(), 0.0f,
+			type->getColor());
 	}
 	m_spriteBatch.end();
 	m_spriteBatch.renderBatch();
