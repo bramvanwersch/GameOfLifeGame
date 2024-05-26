@@ -2,7 +2,7 @@
 
 BlockTypeLibrary::BlockTypeLibrary()
 {
-	m_typeMap.insert(std::make_pair("test", BlockType(BWengine::ColorRGBA8(0, 255, 0))));
+	m_typeMap.insert(std::make_pair("directional_spreader", BlockType(BWengine::ColorRGBA8(0, 255, 0))));
 }
 
 BlockType* BlockTypeLibrary::getBlockType(std::string *name)

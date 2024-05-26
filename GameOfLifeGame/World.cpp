@@ -1,5 +1,6 @@
 #include "World.h"
 #include <BWengine/BWengineErrors.h>
+#include <iostream>
 
 World::World()
 {
@@ -37,13 +38,12 @@ void World::updateBlocks(){
 
 }
 
-void World::setBlock(glm::vec2 worldPosition) {
+void World::setBlock(glm::vec2 worldPosition, BlockType* type) {
 	// set a number of blocks based on the size chosen by user
 	worldPosition = glm::floor(worldPosition);
 	int x = (int) (worldPosition[0] / BLOCK_WIDTH);
 	int y = NR_BLOCKS_HEIGTH - 1 - (int) (worldPosition[1] / BLOCK_HEIGTH);
-	std::string name = "test";
-	setBlockAtCoord(x, y, m_blockTypeLibrary->getBlockType(&name));
+	setBlockAtCoord(x, y, type);
 }
 
 Block* World::getBlockAtCoord(int x, int y) {
@@ -53,9 +53,9 @@ Block* World::getBlockAtCoord(int x, int y) {
 	std::string key = coordToKey(x, y);
 	 auto it = m_blocks.find(key);
 	 if (it == m_blocks.end()) {
-		 return nullptr;
+		return nullptr;
 	 }
-	 return it->second;
+	 return it->second.get();
 }
 
 void World::setBlockAtCoord(int x, int y, BlockType* type) {
@@ -63,7 +63,19 @@ void World::setBlockAtCoord(int x, int y, BlockType* type) {
 		return;
 	}
 	std::string key = coordToKey(x, y);
-	m_blocks.insert(std::make_pair(key, new Block(type, { x * BLOCK_WIDTH, (NR_BLOCKS_HEIGTH - 1 - y) * BLOCK_HEIGTH })));
+	if (type == nullptr){
+		removeBlock(&key);
+	}else{
+		m_blocks.emplace(std::make_pair(key, std::make_shared<DirectionalSpreaderBlock>(DirectionalSpreaderBlock(type, { x * BLOCK_WIDTH, (NR_BLOCKS_HEIGTH - 1 - y) * BLOCK_HEIGTH }))));
+	}
+}
+
+void World::removeBlock(std::string* key){
+	auto it = m_blocks.find(*key);
+	if (it == m_blocks.end()){
+		return;
+	}
+	m_blocks.erase(it);
 }
 
 bool World::isCoordValid(int x, int y) {
@@ -86,7 +98,14 @@ void World::processInput(BWengine::InputManager* inputManager, BWengine::Camera2
 	if (inputManager->isKeyDown(BWengine::Keys::mouse_left)) {
 		glm::vec2 worldPosition = inputManager->getMouseCoords();
 		worldPosition = camera.screenToWorldCoords(worldPosition);
-		setBlock(worldPosition);
+		std::string type_name = "directional_spreader";
+		BlockType* type = m_blockTypeLibrary->getBlockType(&type_name);
+		setBlock(worldPosition, type);
+	}
+	if (inputManager->isKeyDown(BWengine::Keys::mouse_right)) {
+		glm::vec2 worldPosition = inputManager->getMouseCoords();
+		worldPosition = camera.screenToWorldCoords(worldPosition);
+		setBlock(worldPosition, nullptr);
 	}
 
 	if (inputManager->isKeyPressed(BWengine::Keys::space)) {
@@ -106,7 +125,7 @@ void World::draw(BWengine::Camera2D& camera)
 		m_backgroundTexture->color);
 	// not fantastic
 	for (auto kv : m_blocks) {
-		Block* block = kv.second;
+		Block* block = kv.second.get();
 		BlockType* type = block->getType();
 		glm::vec2* position = block->getPosition();
 		m_spriteBatch.draw({position->x, position->y, BLOCK_WIDTH, BLOCK_HEIGTH}, type->getUVs(), type->getTextureID(), 0.0f,

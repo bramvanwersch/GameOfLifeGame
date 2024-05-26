@@ -13,6 +13,7 @@
 #include "Constants.h"
 #include "GameTexture.h"
 #include "Block.h"
+#include "DirectionalSpreaderBlock.h"
 #include "BlockTypeLibrary.h"
 
 
@@ -41,7 +42,8 @@ public:
 protected:
 
 	void updateBlocks();
-	void setBlock(glm::vec2 worldPosition);
+	void setBlock(glm::vec2 worldPosition, BlockType* type);
+	void removeBlock(std::string* key);
 	bool isCoordValid(int x, int y);
 	std::string coordToKey(int x, int y);
 	Block* getBlockAtCoord(int x, int y);
@@ -63,7 +65,7 @@ protected:
 
 	float m_previousTicks = (float)SDL_GetTicks();
 
-	std::unordered_map<std::string, Block*> m_blocks;
+	std::unordered_map<std::string, std::shared_ptr<Block>> m_blocks;
 
 	bool m_paused = false;
 

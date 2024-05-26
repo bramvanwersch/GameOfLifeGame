@@ -24,13 +24,13 @@
     <ClCompile Include="GameOfLifeGame\GamePlayScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameOfLifeGame\Block.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameOfLifeGame\World.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameOfLifeGame\BlockTypeLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOfLifeGame\DirectionalSpreaderBlock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -60,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameOfLifeGame\BlockTypeLibrary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOfLifeGame\DirectionalSpreaderBlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
