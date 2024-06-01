@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <array>
 
 #include "BlockType.h" 
 
@@ -19,6 +20,10 @@ public:
 
 	glm::vec2* getPosition() {
 		return &m_position;
+	}
+
+	std::array<int, 2> getCoord() {
+		return { (int)(m_position.x / BLOCK_WIDTH), (int)(m_position.y / BLOCK_HEIGTH) };
 	}
 
 protected:
