@@ -36,19 +36,24 @@ void World::update(BWengine::InputManager* inputManager, BWengine::Camera2D& cam
 }
 
 void World::updateBlocks(){
-	std::vector<std::shared_ptr<Block>> new_blocks;
+	std::vector<std::shared_ptr<Block>> newBlocks;
 	std::vector<std::string> remove_keys;
+	std::vector<std::shared_ptr<Block>> newBlockBuffer;
 	for (auto kv : m_blocks) {
 		Block* block = kv.second.get();
-		block->update();
-		new_blocks.push_back(kv.second);
+		block->update(&newBlockBuffer);
+		newBlocks.push_back(kv.second);
 		remove_keys.push_back(kv.first);
+		for (auto block: newBlockBuffer){
+			newBlocks.push_back(block);
+		}
+		newBlockBuffer.clear();
 	}
 	// not the geatest solution, might be a way better way
 	for (std::string key : remove_keys) {
 		removeBlock(&key);
 	}
-	for (std::shared_ptr<Block> block : new_blocks) {
+	for (std::shared_ptr<Block> block : newBlocks) {
 		setBlock(block);
 	}
 }

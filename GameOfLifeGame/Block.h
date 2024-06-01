@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <array>
+#include <vector>
 
 #include "BlockType.h" 
 
@@ -11,7 +12,7 @@ public:
 	Block(BlockType* type, glm::vec2 position): m_type(type), m_position(position){};
 	virtual ~Block() = default;
 
-	virtual void update() = 0;
+	virtual void update(std::vector<std::shared_ptr<Block>>* newBlockBuffer) = 0;
 	virtual void react(Block* otherBlock) = 0;
 
 	BlockType* getType() {
