@@ -25,11 +25,11 @@ void World::generate() {
 void World::update(BWengine::InputManager* inputManager, BWengine::Camera2D& camera)
 {
 	float beforeTimeValue = (float)SDL_GetTicks();
+	//update inputs and blocks
+	processInput(inputManager, camera);
 	if (!m_paused) {
 		updateBlocks();
 	}
-	//update inputs and blocks
-	processInput(inputManager, camera);
 
 	m_updateTime.add((float)SDL_GetTicks() - beforeTimeValue);
 
@@ -54,7 +54,7 @@ void World::updateBlocks(){
 		removeBlock(&key);
 	}
 	for (std::shared_ptr<Block> block : newBlocks) {
-		setBlock(block);
+		setBlockWithReact(block);
 	}
 }
 
@@ -77,14 +77,38 @@ Block* World::getBlockAtCoord(int x, int y) {
 	 return it->second.get();
 }
 
-void World::setBlock(std::shared_ptr<Block> block) {
+void World::setBlockWithReact(std::shared_ptr<Block> block) {
 	glm::vec2* position = block.get()->getPosition();
 	if (!isPositionValid(position->x, position->y)) {
 		return;
 	}
 	std::array<int, 2> coord = block.get()->getCoord();
+	Block* current = getBlockAtCoord(coord[0], coord[1]);
 	std::string key = coordToKey(coord[0], coord[1]);
-	m_blocks.emplace(std::make_pair(key, block));
+	if (current != nullptr) {
+		switch(reactBlocks(current, block.get())){
+			case 0:
+				removeBlock(&key);
+				break;
+			case 1:
+				break;
+			case 2:
+				m_blocks.emplace(std::make_pair(key, block));
+				break;
+			default:
+				break;
+		}
+	}
+	else {
+		m_blocks.emplace(std::make_pair(key, block));
+	}
+}
+
+int World::reactBlocks(Block* currentBlock, Block* newBlock) {
+	if (currentBlock->getStayPriority() == newBlock->getStayPriority()){
+		return 0;
+	}
+	return 2;
 }
 
 void World::setBlockTypeAtCoord(int x, int y, BlockType* type) {
@@ -137,7 +161,7 @@ std::string World::coordToKey(int x, int y) {
 
 void World::processInput(BWengine::InputManager* inputManager, BWengine::Camera2D& camera)
 {
-	if (inputManager->isKeyDown(BWengine::Keys::mouse_left)) {
+	if (inputManager->isKeyPressed(BWengine::Keys::mouse_left)) {
 		glm::vec2 worldPosition = inputManager->getMouseCoords();
 		worldPosition = camera.screenToWorldCoords(worldPosition);
 		std::string type_name = "directional_spreader";
@@ -168,10 +192,8 @@ void World::draw(BWengine::Camera2D& camera)
 	// not fantastic
 	for (auto kv : m_blocks) {
 		Block* block = kv.second.get();
-		BlockType* type = block->getType();
 		glm::vec2* position = block->getPosition();
-		m_spriteBatch.draw({position->x, position->y, BLOCK_WIDTH, BLOCK_HEIGTH}, type->getUVs(), type->getTextureID(), 0.0f,
-			type->getColor());
+		m_spriteBatch.draw({position->x, position->y, BLOCK_WIDTH, BLOCK_HEIGTH}, block->getUVs(), block->getTextureID(), 0.0f, block->getColor());
 	}
 	m_spriteBatch.end();
 	m_spriteBatch.renderBatch();

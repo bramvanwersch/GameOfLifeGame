@@ -42,13 +42,14 @@ public:
 protected:
 
 	void updateBlocks();
-	void setBlockAtMouse(glm::vec2 worldPosition, BlockType* type);
-	void removeBlock(std::string* key);
+    int reactBlocks(Block *currentBlock, Block *newBlock);
+    void setBlockAtMouse(glm::vec2 worldPosition, BlockType *type);
+    void removeBlock(std::string* key);
 	bool isCoordValid(int x, int y);
 	bool isPositionValid(float x, float y);
 	std::string coordToKey(int x, int y);
 	Block* getBlockAtCoord(int x, int y);
-	void setBlock(std::shared_ptr<Block> block);
+	void setBlockWithReact(std::shared_ptr<Block> block);
 	void setBlockTypeAtCoord(int x, int y, BlockType* type);
 
 	//variables
