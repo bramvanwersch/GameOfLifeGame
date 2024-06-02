@@ -44,7 +44,7 @@ public:
 	}
 
 	std::array<int, 2> getCoord() {
-		return { (int)(m_position.x / BLOCK_WIDTH), (int)(m_position.y / BLOCK_HEIGTH) };
+		return { (int) round(m_position.x / BLOCK_WIDTH), (int) round(m_position.y / BLOCK_HEIGTH) };
 	}
 
 protected:
