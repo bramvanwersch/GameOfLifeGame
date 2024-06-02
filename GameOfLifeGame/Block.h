@@ -51,7 +51,6 @@ protected:
 	BlockType* m_type;
 	glm::vec2 m_position;
 	unsigned int m_stayPriority;
-	// if direction is 0 spreads all 4 otherwise 1 to indicates NESW (that order)
 	Direction m_direction;
 	BWengine::ColorRGBA8 m_color;
 };

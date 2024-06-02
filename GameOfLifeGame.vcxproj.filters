@@ -33,6 +33,9 @@
     <ClCompile Include="GameOfLifeGame\DirectionalSpreaderBlock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameOfLifeGame\StopperBlock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameOfLifeGame\App.h">
@@ -63,6 +66,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameOfLifeGame\DirectionalSpreaderBlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOfLifeGame\StopperBlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

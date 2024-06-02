@@ -11,8 +11,11 @@ public:
 	BlockTypeLibrary();
 
 	BlockType* getBlockType(std::string* name);
+	std::string getNameByKey(char key);
+	std::unordered_map<char, std::string>* getMaterialKeyMap();
 
 protected:
 	std::unordered_map<std::string, BlockType> m_typeMap;
+	std::unordered_map<char, std::string> m_materialKeyMap;
 };
 

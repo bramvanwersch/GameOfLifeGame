@@ -1,6 +1,7 @@
 #include "World.h"
 #include <BWengine/BWengineErrors.h>
 #include <iostream>
+#include "StopperBlock.h"
 
 World::World()
 {
@@ -120,7 +121,13 @@ void World::setBlockTypeAtCoord(int x, int y, BlockType* type) {
 		removeBlock(&key);
 	}
 	else {
-		m_blocks.emplace(std::make_pair(key, std::make_shared<DirectionalSpreaderBlock>(DirectionalSpreaderBlock(type, { x * BLOCK_WIDTH, (NR_BLOCKS_HEIGTH - 1 - y) * BLOCK_HEIGTH }))));
+		// terrible
+		if (m_current_type == "directional_spreader"){
+			m_blocks.emplace(std::make_pair(key, std::make_shared<DirectionalSpreaderBlock>(DirectionalSpreaderBlock(type, { x * BLOCK_WIDTH, (NR_BLOCKS_HEIGTH - 1 - y) * BLOCK_HEIGTH }))));
+		}else if (m_current_type == "stopper"){
+			m_blocks.emplace(std::make_pair(key, std::make_shared<StopperBlock>(StopperBlock(type, { x * BLOCK_WIDTH, (NR_BLOCKS_HEIGTH - 1 - y) * BLOCK_HEIGTH }))));
+		}
+		
 	}
 }
 
@@ -164,14 +171,23 @@ void World::processInput(BWengine::InputManager* inputManager, BWengine::Camera2
 	if (inputManager->isKeyPressed(BWengine::Keys::mouse_left)) {
 		glm::vec2 worldPosition = inputManager->getMouseCoords();
 		worldPosition = camera.screenToWorldCoords(worldPosition);
-		std::string type_name = "directional_spreader";
-		BlockType* type = m_blockTypeLibrary->getBlockType(&type_name);
+		BlockType* type = m_blockTypeLibrary->getBlockType(&m_current_type);
 		setBlockAtMouse(worldPosition, type);
 	}
 	if (inputManager->isKeyDown(BWengine::Keys::mouse_right)) {
 		glm::vec2 worldPosition = inputManager->getMouseCoords();
 		worldPosition = camera.screenToWorldCoords(worldPosition);
 		setBlockAtMouse(worldPosition, nullptr);
+	}
+	auto materialKeyMap = m_blockTypeLibrary->getMaterialKeyMap();
+
+	for (auto it = materialKeyMap->begin(); it != materialKeyMap->end(); it++)
+	{
+		if (inputManager->isKeyPressed(it->first)) {
+			std::cout << it->first << std::endl;
+			m_current_type = m_blockTypeLibrary->getNameByKey(it->first);
+			break;
+		}
 	}
 
 	if (inputManager->isKeyPressed(BWengine::Keys::space)) {

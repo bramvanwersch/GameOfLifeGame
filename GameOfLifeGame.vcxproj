@@ -25,6 +25,7 @@
     <ClCompile Include="GameOfLifeGame\GamePlayScreen.cpp" />
     <ClCompile Include="GameOfLifeGame\main.cpp" />
     <ClCompile Include="GameOfLifeGame\World.cpp" />
+    <ClCompile Include="GameOfLifeGame\StopperBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameOfLifeGame\DirectionalSpreaderBlock.h" />
@@ -37,6 +38,7 @@
     <ClInclude Include="GameOfLifeGame\GameTexture.h" />
     <ClInclude Include="GameOfLifeGame\utility.h" />
     <ClInclude Include="GameOfLifeGame\World.h" />
+    <ClInclude Include="GameOfLifeGame\StopperBlock.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

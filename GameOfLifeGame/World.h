@@ -69,6 +69,7 @@ protected:
 	float m_previousTicks = (float)SDL_GetTicks();
 
 	std::unordered_map<std::string, std::shared_ptr<Block>> m_blocks;
+	std::string m_current_type = "directional_spreader";
 
 	bool m_paused = false;
 

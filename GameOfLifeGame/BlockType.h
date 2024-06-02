@@ -15,7 +15,7 @@ class BlockType {
 
 public:
 
-	BlockType(BWengine::ColorRGBA8 color) {
+	BlockType(BWengine::ColorRGBA8 color, char key) : m_key(key){
 		m_texture = std::make_unique<GameTexture>();
 		BWengine::TextureSheet* sheet = BWengine::ResourceManager::getTextureSheet("textures/blank.png");
 		if (sheet == nullptr) {
@@ -32,4 +32,5 @@ public:
 protected:
 	glm::vec2 m_dim = glm::vec2(BLOCK_WIDTH, BLOCK_HEIGTH);
 	std::unique_ptr<GameTexture> m_texture = nullptr;
+	char m_key;
 };
