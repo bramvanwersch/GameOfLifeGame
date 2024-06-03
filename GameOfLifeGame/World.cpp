@@ -33,7 +33,6 @@ void World::update(BWengine::InputManager* inputManager, BWengine::Camera2D& cam
 	}
 
 	m_updateTime.add((float)SDL_GetTicks() - beforeTimeValue);
-
 }
 
 void World::updateBlocks(){
@@ -45,7 +44,7 @@ void World::updateBlocks(){
 		block->update(&newBlockBuffer);
 		newBlocks.push_back(kv.second);
 		remove_keys.push_back(kv.first);
-		for (auto block: newBlockBuffer){
+		for (std::shared_ptr<Block> block: newBlockBuffer){
 			newBlocks.push_back(block);
 		}
 		newBlockBuffer.clear();
@@ -87,13 +86,13 @@ void World::setBlockWithReact(std::shared_ptr<Block> block) {
 	Block* current = getBlockAtCoord(coord[0], coord[1]);
 	std::string key = coordToKey(coord[0], coord[1]);
 	if (current != nullptr) {
-		switch(reactBlocks(current, block.get())){
-			case 0:
+		switch(current->react(block.get())){
+			case ReactionResult::BOTH_DELETE:
 				removeBlock(&key);
 				break;
-			case 1:
+			case ReactionResult::MOVE_DELETE:
 				break;
-			case 2:
+			case ReactionResult::CURRENT_DELETE:
 				m_blocks.emplace(std::make_pair(key, block));
 				break;
 			default:
@@ -105,13 +104,6 @@ void World::setBlockWithReact(std::shared_ptr<Block> block) {
 	}
 }
 
-int World::reactBlocks(Block* currentBlock, Block* newBlock) {
-	if (currentBlock->getStayPriority() == newBlock->getStayPriority()){
-		return 0;
-	}
-	return 2;
-}
-
 void World::setBlockTypeAtCoord(int x, int y, BlockType* type) {
 	if (!isCoordValid(x, y)) {
 		return;
@@ -121,13 +113,12 @@ void World::setBlockTypeAtCoord(int x, int y, BlockType* type) {
 		removeBlock(&key);
 	}
 	else {
-		// terrible
+		// its oke, but needs changing at some point
 		if (m_current_type == "directional_spreader"){
 			m_blocks.emplace(std::make_pair(key, std::make_shared<DirectionalSpreaderBlock>(DirectionalSpreaderBlock(type, { x * BLOCK_WIDTH, (NR_BLOCKS_HEIGTH - 1 - y) * BLOCK_HEIGTH }))));
 		}else if (m_current_type == "stopper"){
 			m_blocks.emplace(std::make_pair(key, std::make_shared<StopperBlock>(StopperBlock(type, { x * BLOCK_WIDTH, (NR_BLOCKS_HEIGTH - 1 - y) * BLOCK_HEIGTH }))));
 		}
-		
 	}
 }
 
@@ -168,7 +159,7 @@ std::string World::coordToKey(int x, int y) {
 
 void World::processInput(BWengine::InputManager* inputManager, BWengine::Camera2D& camera)
 {
-	if (inputManager->isKeyPressed(BWengine::Keys::mouse_left)) {
+	if (inputManager->isKeyDown(BWengine::Keys::mouse_left)) {
 		glm::vec2 worldPosition = inputManager->getMouseCoords();
 		worldPosition = camera.screenToWorldCoords(worldPosition);
 		BlockType* type = m_blockTypeLibrary->getBlockType(&m_current_type);

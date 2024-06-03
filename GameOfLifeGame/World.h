@@ -42,7 +42,6 @@ public:
 protected:
 
 	void updateBlocks();
-    int reactBlocks(Block *currentBlock, Block *newBlock);
     void setBlockAtMouse(glm::vec2 worldPosition, BlockType *type);
     void removeBlock(std::string* key);
 	bool isCoordValid(int x, int y);

@@ -7,8 +7,9 @@
 
 
 enum class ReactionResult {
-	DELETE,
-	OVERWRITE
+	BOTH_DELETE,
+	MOVE_DELETE,
+	CURRENT_DELETE
 };
 
 enum class Direction {
@@ -30,6 +31,18 @@ public:
 	virtual ~Block() = default;
 
 	virtual void update(std::vector<std::shared_ptr<Block>>* newBlockBuffer) = 0;
+
+	ReactionResult react(Block* movingBlock){
+		unsigned int stay1 = getStayPriority();
+		unsigned int stay2 = movingBlock->getStayPriority();
+		if (stay1 == stay2){
+			return ReactionResult::BOTH_DELETE;
+		}
+		if (stay1 > stay2){
+			return ReactionResult::MOVE_DELETE;
+		}
+		return ReactionResult::CURRENT_DELETE;
+	}
 
 	glm::vec4 getUVs() { return m_type->getUVs(); }
 	GLuint getTextureID() { return m_type->getTextureID(); }
